@@ -168,6 +168,19 @@
         .login-form .btn-login i {
             margin-right: 8px;
         }
+        .login-form .forgot-link {
+            text-align: right;
+            margin: -0.25rem 0 0.75rem;
+            font-size: 0.8rem;
+        }
+        .login-form .forgot-link a {
+            color: #1e3a8a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-form .forgot-link a:hover {
+            text-decoration: underline;
+        }
         .login-form .register-link {
             text-align: center;
             margin-top: 1rem;
@@ -309,6 +322,10 @@
                 </div>
             </div>
 
+            <div class="forgot-link">
+                <a href="/esqueci-senha">Esqueceu a senha?</a>
+            </div>
+
             <div th:if="${param.error}" class="alert-custom alert-danger-custom">
                 <i class="fas fa-exclamation-circle"></i> E-mail ou senha inválidos
             </div>
@@ -317,6 +334,9 @@
             </div>
             <div th:if="${param.sucesso}" class="alert-custom alert-success-custom">
                 <i class="fas fa-check-circle"></i> Cadastro realizado com sucesso!
+            </div>
+            <div th:if="${param.senhaAlterada}" class="alert-custom alert-success-custom">
+                <i class="fas fa-check-circle"></i> Senha alterada com sucesso! Faça login.
             </div>
 
             <button type="submit" class="btn-login">

@@ -138,6 +138,17 @@ public class VeterinarioRepository {
         );
     }
 
+    public void atualizarSenha(Long id, String senhaHash) {
+
+        String sql = """
+                UPDATE VETERINARIOS
+                SET SENHA = ?
+                WHERE ID = ?
+                """;
+
+        jdbcTemplate.update(sql, senhaHash, id);
+    }
+
     public void deletar(Long id) {
 
         String sql = """

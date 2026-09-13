@@ -56,6 +56,18 @@ public class LembreteController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/criar/{consultaId}")
+    public ResponseEntity<Lembrete> criarLembrete(
+            @PathVariable Long consultaId) {
+
+        Lembrete lembrete =
+                service.criarLembrete(consultaId);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(lembrete);
+    }
+
     @PostMapping("/criar-enviar/{consultaId}")
     public ResponseEntity<Void> criarEEnviarLembrete(
             @PathVariable Long consultaId) {

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova senha - ClyvoPet</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f1a3a;
+            padding: 1rem;
+        }
+        .reset-card {
+            max-width: 440px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .reset-header { background: linear-gradient(135deg, #1e3a8a, #2563eb); padding: 1.5rem; text-align: center; }
+        .reset-header .logo { max-width: 120px; width: 100%; height: auto; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+        .reset-header h2 { color: white; font-size: 1.3rem; font-weight: 700; margin-top: 0.5rem; margin-bottom: 0; }
+        .reset-header p { color: rgba(255,255,255,0.8); font-size: 0.85rem; margin: 0.15rem 0 0; }
+        .reset-body { padding: 1.5rem; }
+        .reset-body .form-group { margin-bottom: 0.9rem; }
+        .reset-body label { font-weight: 600; color: #1e293b; font-size: 0.85rem; display: block; margin-bottom: 0.25rem; }
+        .reset-body .input-group { border: 2px solid #e2e8f0; border-radius: 10px; transition: all 0.3s ease; overflow: hidden; }
+        .reset-body .input-group:focus-within { border-color: #1e3a8a; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12); }
+        .reset-body .input-group-text { background: #f8fafc; border: none; color: #94a3b8; padding: 0.5rem 0.9rem; font-size: 0.9rem; }
+        .reset-body .form-control { border: none; padding: 0.6rem 0.9rem; font-size: 0.9rem; background: white; outline: none; box-shadow: none; }
+        .reset-body .form-control:focus { box-shadow: none; border: none; }
+        .reset-body .btn-reset {
+            width: 100%; padding: 0.7rem; font-weight: 600; font-size: 0.95rem; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; transition: all 0.3s ease; cursor: pointer; margin-top: 0.5rem;
+        }
+        .reset-body .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3); }
+        .reset-body .btn-reset i { margin-right: 8px; }
+        .reset-body .back-link { text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #64748b; }
+        .reset-body .back-link a { color: #1e3a8a; font-weight: 600; text-decoration: none; }
+        .reset-body .back-link a:hover { text-decoration: underline; }
+        .alert-custom { border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 0.75rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-danger-custom { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="reset-card">
+    <div class="reset-header">
+        <img src="/images/clyvoLogo.png" alt="ClyvoPet" class="logo" onerror="this.style.display='none'">
+        <h2>Criar nova senha</h2>
+        <p>Escolha uma senha com no mínimo 6 caracteres</p>
+    </div>
+
+    <div class="reset-body">
+        <div th:if="${erro}" class="alert-custom alert-danger-custom">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${erro}"></span>
+        </div>
+
+        <form th:action="@{/redefinir-senha}" method="post">
+            <input type="hidden" name="token" th:value="${token}">
+
+            <div class="form-group">
+                <label for="senha">Nova senha</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" id="senha" name="senha" class="form-control" placeholder="Mínimo 6 caracteres" required minlength="6" autofocus>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarSenha">Confirmar nova senha</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="Repita a nova senha" required minlength="6">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-reset">
+                <i class="fas fa-check"></i> Salvar nova senha
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a href="/login"><i class="fas fa-arrow-left"></i> Voltar para o login</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

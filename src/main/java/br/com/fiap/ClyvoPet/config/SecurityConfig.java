@@ -64,6 +64,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login",
                                 "/registrar",
+                                "/esqueci-senha",
+                                "/redefinir-senha",
 
                                 "/api/auth/**",
 

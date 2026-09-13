@@ -11,9 +11,16 @@
 
 <div th:fragment="page">
 
-    <h1 th:text="${consulta.id != null ? '✏ Editar Consulta' : 'Nova Consulta'}">
-        Nova Consulta
-    </h1>
+    <!-- Título centralizado -->
+    <div class="text-center mb-3">
+        <h1 class="page-title">
+            <i class="fas fa-calendar-check me-2"
+               style="color: var(--primary);"></i>
+            <span th:text="${consulta.id != null ? '✏ Editar Consulta' : 'Nova Consulta'}">
+                Nova Consulta
+            </span>
+        </h1>
+    </div>
 
     <div class="card">
         <div class="card-body">
