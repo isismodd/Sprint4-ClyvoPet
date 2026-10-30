@@ -10,7 +10,7 @@ O projeto possui autenticação e autorização por perfil de usuário, persist�
 
 O ClyvoPet está publicado no **Microsoft Azure App Service** e pode ser acessado diretamente pelo navegador:
 
-### 🔗 [Acessar ClyvoPet](https//:clyvopet-rm561497.azurewebsites.net)
+### 🔗 [Acessar ClyvoPet](https://clyvopet-rm561497.azurewebsites.net)
 
 > 🔐 As funcionalidades internas do sistema são protegidas por autenticação e exigem login.
 
@@ -298,7 +298,7 @@ ClyvoPet
 **CI/CD:** GitHub Actions  
 **Monitoramento:** Azure Application Insights  
 
-🔗 **Aplicação:** [clyvo-pet-rm561497.azurewebsites.net](https//:clyvopet-rm561497.azurewebsites.net)
+🔗 **Aplicação:** [clyvo-pet-rm561497.azurewebsites.net](https://clyvopet-rm561497.azurewebsites.net)
 
 ---
 
