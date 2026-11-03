@@ -1,0 +1,116 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: 'ClyvoPet-Agent'
+
+variables:
+  - group: 'ClyvoPet-Oracle'
+
+stages:
+  - stage: Infraestrutura
+    displayName: 'Infraestrutura - Validar Azure'
+    jobs:
+      - job: ValidarInfraestrutura
+        displayName: 'Verificar Azure Web App'
+        steps:
+          - checkout: none
+          - task: AzureCLI@2
+            displayName: 'Validar Web App existente'
+            inputs:
+              azureSubscription: 'Azure-ClyvoPet'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az webapp show `
+                  --resource-group rg-ClyvoPet `
+                  --name ClyvoPet-rm561497 `
+                  --query "{name:name, state:state, location:location}" `
+                  --output table
+
+  - stage: BuildTestes
+    displayName: 'Build, Testes e Artefato'
+    dependsOn: Infraestrutura
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build e Testes Java'
+        steps:
+          - checkout: self
+          - powershell: |
+              java --version
+              javac --version
+              .\mvnw.cmd -version
+            displayName: 'Verificar Java 21 e Maven'
+          - powershell: |
+              .\mvnw.cmd -B clean package
+            displayName: 'Build e testes com Maven'
+          - task: PublishTestResults@2
+            displayName: 'Publicar resultados dos testes'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: true
+              testRunTitle: 'Testes automatizados ClyvoPet'
+          - task: CopyFiles@2
+            displayName: 'Preparar artefato JAR'
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)'
+              Contents: |
+                **/target/ClyvoPet-*.jar
+                !**/target/*.jar.original
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publicar artefato'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)'
+              artifact: 'ClyvoPet-JAR'
+              publishLocation: 'pipeline'
+
+  - stage: Deploy
+    displayName: 'Deploy - Azure App Service'
+    dependsOn: BuildTestes
+    jobs:
+      - job: DeployWebApp
+        displayName: 'Publicar ClyvoPet no Azure'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Baixar artefato'
+            inputs:
+              artifact: 'ClyvoPet-JAR'
+              path: '$(Pipeline.Workspace)/ClyvoPet-JAR'
+          - task: AzureAppServiceSettings@1
+            displayName: 'Configurar variáveis do Oracle'
+            inputs:
+              azureSubscription: 'Azure-ClyvoPet'
+              appName: 'ClyvoPet-rm561497'
+              resourceGroupName: 'rg-ClyvoPet'
+              appSettings: |
+                [
+                  {
+                    "name": "SPRING_DATASOURCE_URL",
+                    "value": "$(SPRING_DATASOURCE_URL)",
+                    "slotSetting": false
+                  },
+                  {
+                    "name": "SPRING_DATASOURCE_USERNAME",
+                    "value": "$(SPRING_DATASOURCE_USERNAME)",
+                    "slotSetting": false
+                  },
+                  {
+                    "name": "SPRING_DATASOURCE_PASSWORD",
+                    "value": "$(SPRING_DATASOURCE_PASSWORD)",
+                    "slotSetting": false
+                  }
+                ]
+          - task: AzureWebApp@1
+            displayName: 'Deploy do JAR no Azure'
+            inputs:
+              azureSubscription: 'Azure-ClyvoPet'
+              appType: 'webAppLinux'
+              appName: 'ClyvoPet-rm561497'
+              package: '$(Pipeline.Workspace)/ClyvoPet-JAR/**/*.jar'
+              runtimeStack: 'JAVA|21-java21'
