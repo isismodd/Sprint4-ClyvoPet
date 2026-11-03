@@ -10,7 +10,7 @@ O projeto possui autenticação e autorização por perfil de usuário, persist�
 
 O ClyvoPet está publicado no **Microsoft Azure App Service** e pode ser acessado diretamente pelo navegador:
 
-### 🔗 [Acessar ClyvoPet](https://clyvopet-rm561497.azurewebsites.net)
+🔗 [Acessar ClyvoPet](https://clyvopet-rm561497.azurewebsites.net)
 
 > 🔐 As funcionalidades internas do sistema são protegidas por autenticação e exigem login.
 
@@ -148,7 +148,7 @@ As mensagens de validação também são apresentadas diretamente nos formulári
 
 ## Banco de dados
 
-O ClyvoPet utiliza **Oracle Database** para persistência das informações.
+O ClyvoPet utiliza **Oracle Database da FIAP** para persistência das informações.
 
 Entre as principais tabelas utilizadas estão:
 
@@ -171,7 +171,7 @@ As migrations são executadas automaticamente durante a inicialização da aplic
 
 Exemplos de responsabilidades das migrations utilizadas no projeto:
 
-```
+```text
 db/migration/
 ├── V1__create_table_initial.sql
 ├── V2__...
@@ -187,11 +187,11 @@ As migrations são responsáveis por tarefas como:
 
 ---
 
-## Arquitetura
+## Arquitetura da aplicação
 
 O projeto utiliza uma arquitetura em camadas para separar as responsabilidades da aplicação.
 
-```
+```text
 Controller
     ↓
 Service
@@ -249,56 +249,81 @@ Oracle Database
 
 ### Cloud e DevOps
 
-![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=for-the-badge)
+![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Azure DevOps](https://img.shields.io/badge/Azure_DevOps-0078D7?style=for-the-badge&logo=azuredevops&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
 - Microsoft Azure App Service;
+- Azure DevOps;
+- Azure Pipelines;
 - GitHub;
 - GitHub Actions;
 - CI/CD;
-- Application Insights;
+- Azure Application Insights;
 - Variáveis de ambiente para gerenciamento de configurações sensíveis.
 
 ---
 
-## ☁️ Deploy
+## ☁️ Deploy e CI/CD
 
 A aplicação está hospedada no **Microsoft Azure App Service**, utilizando ambiente Linux com **Java 21**.
 
-O processo de build e deploy é integrado ao **GitHub Actions**, permitindo a publicação da aplicação no Azure a partir do repositório do projeto.
+O projeto utiliza processos de integração contínua e entrega contínua (CI/CD) para automatizar a compilação, execução de testes, geração de artefatos e publicação da aplicação.
 
-```
-GitHub
-   │
-   ▼
-GitHub Actions
-   │
-   ├── Build Maven
-   │
-   ▼
-Aplicação Spring Boot (.jar)
-   │
-   ▼
-Microsoft Azure App Service
-   │
-   ├── Java 21
-   ├── Application Insights
-   └── Variáveis de ambiente
-   │
-   ▼
-ClyvoPet
-```
+### Azure DevOps — Sprint 4
 
-### 🌎 Ambiente de produção
+Foi configurada uma pipeline YAML no **Azure DevOps**, conectada ao repositório Git e configurada para executar automaticamente a partir de alterações na branch `master`.
 
-**Plataforma:** Microsoft Azure  
-**Serviço:** Azure App Service  
-**Runtime:** Java 21  
-**CI/CD:** GitHub Actions  
-**Monitoramento:** Azure Application Insights  
+A pipeline utiliza um agente self-hosted do Azure Pipelines, configurado em ambiente Windows, responsável pela execução das etapas de integração e entrega.
 
-🔗 **Aplicação:** [clyvo-pet-rm561497.azurewebsites.net](https://clyvopet-rm561497.azurewebsites.net)
+**Etapas da pipeline:**
+
+1. **Infraestrutura:** validação do Azure Web App existente por meio do Azure CLI.
+2. **Build e testes:** verificação do Java 21 e Maven, compilação do projeto e execução dos testes automatizados.
+3. **Publicação do artefato:** geração e publicação do arquivo JAR como artefato da pipeline.
+4. **Configuração:** aplicação das variáveis de ambiente necessárias para a conexão com o banco Oracle.
+5. **Deploy:** download do artefato e publicação automática no Azure App Service.
+
+**Recursos utilizados:**
+
+- Azure DevOps Pipelines para orquestração do CI/CD;
+- Repositório Git conectado à pipeline;
+- Agente self-hosted do Azure Pipelines;
+- Maven para build e testes;
+- Pipeline Artifacts para armazenamento do JAR;
+- Variable Group `ClyvoPet-Oracle` para gerenciamento das configurações do Oracle;
+- Azure Service Connection `Azure-ClyvoPet` para autenticação com o Azure;
+- Azure App Service para hospedagem da aplicação.
+
+As credenciais do banco de dados são armazenadas em variáveis protegidas no Azure DevOps e disponibilizadas à aplicação por meio de variáveis de ambiente, sem exposição de senhas no código-fonte.
+
+**Links do Azure DevOps:**
+
+- [Organização Azure DevOps](https://dev.azure.com/RM561497)
+- [Projeto Sprint 4 – Azure DevOps](https://dev.azure.com/RM561497/Sprint%204%20%E2%80%93%20Azure%20DevOps)
+- [Pipelines](https://dev.azure.com/RM561497/Sprint%204%20%E2%80%93%20Azure%20DevOps/_build?definitionId=1&_a=summary)
+
+### GitHub Actions
+
+O projeto também possui integração com GitHub Actions para automatizar o processo de build e deploy da aplicação no Azure App Service.
+
+O fluxo utiliza o repositório GitHub como origem do código e executa as etapas de compilação com Maven e publicação no ambiente Azure.
+
+### Ambiente de produção
+
+| Configuração | Valor |
+|---|---|
+| Plataforma | Microsoft Azure |
+| Serviço | Azure App Service |
+| Sistema operacional | Linux |
+| Runtime | Java 21 |
+| Banco de dados | Oracle Database da FIAP |
+| CI/CD da Sprint 4 | Azure DevOps Pipelines |
+| Automação adicional | GitHub Actions |
+| Monitoramento | Azure Application Insights |
+
+🔗 **Aplicação:** [https://clyvopet-rm561497.azurewebsites.net](https://clyvopet-rm561497.azurewebsites.net)
 
 ---
 
@@ -306,7 +331,7 @@ ClyvoPet
 
 A organização principal do projeto segue a estrutura:
 
-```
+```text
 src/
 ├── main/
 │   ├── java/
@@ -334,11 +359,12 @@ src/
 
 Essa separação facilita a manutenção do projeto e mantém as responsabilidades de cada camada organizadas.
 
+
 ---
 
 ## Desenvolvimento
 
-Projeto desenvolvido como parte das atividades acadêmicas da **FIAP**, aplicando conceitos de desenvolvimento Java, Spring Boot, banco de dados, segurança e computação em nuvem.
+Projeto desenvolvido como parte das atividades acadêmicas da **FIAP**, aplicando conceitos de desenvolvimento Java, Spring Boot, banco de dados, segurança, computação em nuvem e práticas de DevOps.
 
 ---
 
