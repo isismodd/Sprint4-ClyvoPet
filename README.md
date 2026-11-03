@@ -396,7 +396,13 @@ Atualmente, esse workflow está **desativado**, pois o processo de CI/CD e deplo
 🔗 **Aplicação:** [https://clyvopet-rm561497.azurewebsites.net](https://clyvopet-rm561497.azurewebsites.net)
 
 ---
+Diagrama da Arquitetura + Fluxo CI/CD
 
+O diagrama abaixo apresenta a arquitetura completa do ClyvoPet, contemplando as personas envolvidas, as tecnologias utilizadas, os serviços em nuvem e o fluxo de integração e entrega contínua (CI/CD).
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/7b3eabe0-38a6-4a22-8bdd-6b084cd93d85" />
+
+---
 ## 📁 Estrutura do projeto
 
 A organização principal do projeto segue a estrutura:
