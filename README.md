@@ -30,7 +30,7 @@ A aplicação possui interface web responsiva desenvolvida com **Thymeleaf e Boo
 
 ## Principais funcionalidades
 
-### Gerenciamento de animais
+### 🐶 Gerenciamento de animais
 
 O sistema permite realizar o gerenciamento dos animais cadastrados na clínica, incluindo:
 
@@ -41,9 +41,7 @@ O sistema permite realizar o gerenciamento dos animais cadastrados na clínica, 
 - Armazenamento dos dados do tutor;
 - Visualização de detalhes como espécie, raça, idade, peso, sexo e observações.
 
----
-
-### Gerenciamento de veterinários
+### 👩‍⚕️ Gerenciamento de veterinários
 
 Administradores possuem acesso ao gerenciamento dos profissionais veterinários.
 
@@ -60,9 +58,7 @@ Entre as operações disponíveis estão:
 
 A administração dos veterinários é uma funcionalidade exclusiva para usuários com perfil **ADMIN**.
 
----
-
-### Gerenciamento de consultas
+### 📅 Gerenciamento de consultas
 
 O ClyvoPet permite organizar os atendimentos realizados pela clínica.
 
@@ -79,23 +75,19 @@ O sistema também possui regras para preservar a consistência das consultas cas
 
 Quando necessário, as consultas associadas são canceladas e permanecem registradas no sistema, preservando o histórico do atendimento.
 
----
-
-### Lembretes
+### 🔔 Lembretes
 
 A aplicação possui gerenciamento de lembretes relacionados aos atendimentos veterinários.
 
 Os lembretes auxiliam no acompanhamento das consultas e permitem que informações importantes sejam enviadas aos responsáveis.
 
----
-
-### Envio de e-mails
+### ✉️ Envio de e-mails
 
 O ClyvoPet possui integração com serviço de e-mail utilizando **Spring Mail**.
 
 A funcionalidade permite o envio de notificações relacionadas aos lembretes diretamente pela aplicação.
 
-O serviço utiliza comunicação SMTP autenticada e suas credenciais são armazenadas de forma segura por meio de variáveis de ambiente no ambiente de produção.
+O serviço utiliza comunicação SMTP autenticada e suas credenciais são armazenadas por meio de variáveis de ambiente no ambiente de produção.
 
 ---
 
@@ -191,17 +183,33 @@ As migrations são responsáveis por tarefas como:
 
 O projeto utiliza uma arquitetura em camadas para separar as responsabilidades da aplicação.
 
-```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-JdbcTemplate
-    ↓
-Oracle Database
+### Diagrama da arquitetura
+
+```mermaid
+flowchart TB
+    U["Usuário / Navegador"]
+    V["Interface Web<br/>Thymeleaf + Bootstrap"]
+    C["Controllers<br/>Web e API"]
+    S["Services<br/>Regras de negócio"]
+    R["Repositories"]
+    J["Spring JDBC / JdbcTemplate"]
+    DB[("Oracle Database<br/>FIAP")]
+    F["Flyway<br/>Migrations"]
+    M["Spring Mail<br/>Notificações por e-mail"]
+    SEC["Spring Security<br/>Autenticação e autorização"]
+
+    U --> V
+    V --> C
+    C --> S
+    S --> R
+    R --> J
+    J --> DB
+    F --> DB
+    S --> M
+    SEC -.-> C
 ```
+
+A arquitetura também utiliza Spring Security para proteger o acesso às funcionalidades e Spring Mail para o envio de notificações.
 
 ---
 
@@ -251,16 +259,16 @@ Oracle Database
 
 ![Azure](https://img.shields.io/badge/Microsoft_Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
 ![Azure DevOps](https://img.shields.io/badge/Azure_DevOps-0078D7?style=for-the-badge&logo=azuredevops&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
 - Microsoft Azure App Service;
 - Azure DevOps;
 - Azure Pipelines;
 - GitHub;
-- GitHub Actions;
 - CI/CD;
 - Azure Application Insights;
+- Azure CLI;
+- Agente self-hosted do Azure Pipelines;
 - Variáveis de ambiente para gerenciamento de configurações sensíveis.
 
 ---
@@ -269,46 +277,107 @@ Oracle Database
 
 A aplicação está hospedada no **Microsoft Azure App Service**, utilizando ambiente Linux com **Java 21**.
 
-O projeto utiliza processos de integração contínua e entrega contínua (CI/CD) para automatizar a compilação, execução de testes, geração de artefatos e publicação da aplicação.
+O processo de integração contínua e entrega contínua (CI/CD) é realizado pelo **Azure DevOps**, conectado ao repositório GitHub `isismodd/Sprint4-ClyvoPet`, utilizando a branch `main` como origem do código.
+
+A pipeline é executada automaticamente a cada novo commit na branch configurada.
 
 ### Azure DevOps — Sprint 4
 
-Foi configurada uma pipeline YAML no **Azure DevOps**, conectada ao repositório Git e configurada para executar automaticamente a partir de alterações na branch `master`.
+Foi criada uma pipeline YAML no Azure DevOps, utilizando um agente self-hosted chamado `ClyvoPet-Agent`, configurado em ambiente Windows.
 
-A pipeline utiliza um agente self-hosted do Azure Pipelines, configurado em ambiente Windows, responsável pela execução das etapas de integração e entrega.
+### Diagrama do fluxo CI/CD
 
-**Etapas da pipeline:**
+```mermaid
+flowchart TD
+    A["Desenvolvedor realiza alteração no código"]
+    B["GitHub<br/>isismodd/Sprint4-ClyvoPet<br/>Branch: main"]
+    C["Azure DevOps Pipeline<br/>Trigger automático"]
+    D["Agente self-hosted<br/>ClyvoPet-Agent"]
+    E["Etapa 1: Infraestrutura<br/>Validação do Azure Web App<br/>Azure CLI"]
+    F["Etapa 2: Build e testes<br/>Java 21 + Maven"]
+    G["Execução dos testes automatizados"]
+    H["Publicação do artefato<br/>ClyvoPet-JAR"]
+    I["Etapa 3: Deploy<br/>Download do artefato"]
+    J["Configuração das variáveis<br/>ClyvoPet-Oracle"]
+    K["Azure Service Connection<br/>Azure-ClyvoPet"]
+    L["Azure App Service<br/>Linux + Java 21"]
+    M[("Oracle Database<br/>FIAP")]
+    N["Aplicação publicada<br/>ClyvoPet"]
 
-1. **Infraestrutura:** validação do Azure Web App existente por meio do Azure CLI.
-2. **Build e testes:** verificação do Java 21 e Maven, compilação do projeto e execução dos testes automatizados.
-3. **Publicação do artefato:** geração e publicação do arquivo JAR como artefato da pipeline.
-4. **Configuração:** aplicação das variáveis de ambiente necessárias para a conexão com o banco Oracle.
-5. **Deploy:** download do artefato e publicação automática no Azure App Service.
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    J --> K
+    K --> L
+    L --> M
+    L --> N
+```
 
-**Recursos utilizados:**
+### Etapas da pipeline
 
-- Azure DevOps Pipelines para orquestração do CI/CD;
-- Repositório Git conectado à pipeline;
-- Agente self-hosted do Azure Pipelines;
-- Maven para build e testes;
-- Pipeline Artifacts para armazenamento do JAR;
-- Variable Group `ClyvoPet-Oracle` para gerenciamento das configurações do Oracle;
-- Azure Service Connection `Azure-ClyvoPet` para autenticação com o Azure;
-- Azure App Service para hospedagem da aplicação.
+**1. Infraestrutura**
 
-As credenciais do banco de dados são armazenadas em variáveis protegidas no Azure DevOps e disponibilizadas à aplicação por meio de variáveis de ambiente, sem exposição de senhas no código-fonte.
+- Validação da existência do Azure Web App;
+- Consulta das informações do recurso utilizando Azure CLI.
 
-**Links do Azure DevOps:**
+**2. Build e testes**
+
+- Verificação da instalação do Java 21;
+- Verificação do Maven;
+- Compilação do projeto utilizando `mvnw`;
+- Execução dos testes automatizados;
+- Publicação dos resultados dos testes.
+
+**3. Publicação do artefato**
+
+- Geração do arquivo JAR;
+- Preparação dos arquivos de build;
+- Publicação do artefato `ClyvoPet-JAR` no Azure DevOps Pipeline Artifacts.
+
+**4. Configuração e deploy**
+
+- Download do artefato gerado;
+- Configuração das variáveis de ambiente para conexão com o Oracle;
+- Autenticação no Azure utilizando a Service Connection;
+- Publicação automática do JAR no Azure App Service.
+
+### Recursos utilizados
+
+| Recurso | Finalidade |
+|---|---|
+| GitHub | Repositório do código-fonte |
+| Azure DevOps Pipelines | Orquestração do CI/CD |
+| `ClyvoPet-Agent` | Agente self-hosted |
+| Maven | Build e execução dos testes |
+| `ClyvoPet-JAR` | Artefato publicado pela pipeline |
+| `ClyvoPet-Oracle` | Variable Group com configurações do Oracle |
+| `Azure-ClyvoPet` | Service Connection com o Azure |
+| Azure App Service | Hospedagem da aplicação |
+| Azure Application Insights | Monitoramento da aplicação |
+
+### Segurança das configurações
+
+As credenciais do banco de dados são armazenadas em variáveis protegidas no Azure DevOps, por meio do Variable Group `ClyvoPet-Oracle`.
+
+As configurações são disponibilizadas à aplicação por meio de variáveis de ambiente, evitando a exposição de senhas e informações sensíveis no código-fonte.
+
+### Links do Azure DevOps
 
 - [Organização Azure DevOps](https://dev.azure.com/RM561497)
 - [Projeto Sprint 4 – Azure DevOps](https://dev.azure.com/RM561497/Sprint%204%20%E2%80%93%20Azure%20DevOps)
-- [Pipelines](https://dev.azure.com/RM561497/Sprint%204%20%E2%80%93%20Azure%20DevOps/_build?definitionId=1&_a=summary)
+- [Pipeline — histórico de execuções](https://dev.azure.com/RM561497/Sprint%204%20%E2%80%93%20Azure%20DevOps/_build?definitionId=1&_a=summary)
 
 ### GitHub Actions
 
-O projeto também possui integração com GitHub Actions para automatizar o processo de build e deploy da aplicação no Azure App Service.
+O repositório também possui um workflow do GitHub Actions criado anteriormente para build e deploy no Azure App Service.
 
-O fluxo utiliza o repositório GitHub como origem do código e executa as etapas de compilação com Maven e publicação no ambiente Azure.
+Atualmente, esse workflow está **desativado**, pois o processo de CI/CD e deploy da Sprint 4 está sendo realizado pelo Azure DevOps.
 
 ### Ambiente de produção
 
@@ -319,8 +388,9 @@ O fluxo utiliza o repositório GitHub como origem do código e executa as etapas
 | Sistema operacional | Linux |
 | Runtime | Java 21 |
 | Banco de dados | Oracle Database da FIAP |
-| CI/CD da Sprint 4 | Azure DevOps Pipelines |
-| Automação adicional | GitHub Actions |
+| CI/CD atual | Azure DevOps Pipelines |
+| Repositório | GitHub |
+| Branch | `main` |
 | Monitoramento | Azure Application Insights |
 
 🔗 **Aplicação:** [https://clyvopet-rm561497.azurewebsites.net](https://clyvopet-rm561497.azurewebsites.net)
@@ -352,13 +422,12 @@ src/
 │       │   ├── css/
 │       │   └── images/
 │       ├── templates/
-│       └── application.properties
+│       └── application.properties/
 │
 └── test/
 ```
 
 Essa separação facilita a manutenção do projeto e mantém as responsabilidades de cada camada organizadas.
-
 
 ---
 
